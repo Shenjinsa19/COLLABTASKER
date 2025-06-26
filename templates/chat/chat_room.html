@@ -1,0 +1,62 @@
+{% extends "collabtasker/base.html" %}
+
+{% block title %}Chat Room{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 50px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+  <h2 style="color: #007bff; margin-bottom: 25px; font-weight: 700;">
+    Chat for Project: <span style="color: #333;">{{ project.name }}</span>
+  </h2>
+
+  <div id="chat-log" 
+       style="border: 1px solid #ccc; border-radius: 8px; height: 350px; padding: 15px; overflow-y: auto; background-color: #fafafa; box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);">
+    <!-- Messages will appear here -->
+  </div>
+
+  <div style="margin-top: 15px; display: flex; gap: 10px;">
+    <input id="chat-message-input" type="text" size="80" placeholder="Type your message here..."
+           style="flex-grow: 1; padding: 10px 15px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; outline: none;"
+           onkeydown="if(event.key === 'Enter'){document.getElementById('chat-message-submit').click();}">
+    
+    <button id="chat-message-submit"
+            style="background-color: #007bff; color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+      Send
+    </button>
+  </div>
+</div>
+
+<script>
+    const projectId = {{ project.id }};
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + projectId + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const chatLog = document.getElementById('chat-log');
+        // Append new message with user and message in bold for user
+        chatLog.innerHTML += `<p style="margin: 6px 0;">
+                                <b style="color:#007bff;">${data.user}:</b> 
+                                <span style="color:#333;">${data.message}</span>
+                              </p>`;
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.getElementById('chat-message-submit').onclick = function(e) {
+        const inputElem = document.getElementById('chat-message-input');
+        const message = inputElem.value;
+        if(message.trim() !== '') {
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            inputElem.value = '';
+        }
+    };
+</script>
+{% endblock %}

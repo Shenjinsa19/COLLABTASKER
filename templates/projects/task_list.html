@@ -1,0 +1,40 @@
+{% extends "collabtasker/base.html" %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 60px auto; padding: 35px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+  <h1 style="font-size: 26px; color: #007bff; margin-bottom: 25px; text-align: center;">Task List</h1>
+
+  <div style="margin-bottom: 25px; text-align: center;">
+    {% if project %}
+      <a href="{% url 'task_create' project.id %}" 
+         style="text-decoration: none; background-color: #28a745; color: white; padding: 10px 18px; border-radius: 6px; font-size: 15px;">
+        + Create New Task
+      </a>
+    {% else %}
+      <span style="color: red;">Project not found. Cannot create task.</span>
+    {% endif %}
+  </div>
+
+  <ul style="list-style: none; padding: 0;">
+    {% for task in tasks %}
+      <li style="background-color: #f9f9f9; padding: 15px 20px; margin-bottom: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'task_detail' task.pk %}" style="font-size: 17px; font-weight: 500; color: #333; text-decoration: none;">
+          {{ task.title }}
+        </a>
+        <span style="font-size: 14px; color: #666;">
+          Assigned to: {{ task.assigned_to }}
+        </span>
+      </li>
+    {% empty %}
+      <li style="font-size: 16px; color: #666;">No tasks found.</li>
+    {% endfor %}
+  </ul>
+
+  <div style="margin-top: 30px; text-align: center;">
+    <a href="{% url 'project_list' %}" 
+       style="text-decoration: none; color: #007bff; font-weight: 500;">← Back to Projects</a>
+  </div>
+
+</div>
+{% endblock %}

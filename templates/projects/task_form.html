@@ -1,0 +1,25 @@
+{% extends "collabtasker/base.html" %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 60px auto; padding: 35px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+  <h1 style="font-size: 26px; color: #007bff; margin-bottom: 25px; text-align: center;">Create a New Task</h1>
+
+  <form method="post" style="font-size: 16px; color: #333;">
+    {% csrf_token %}
+    <div style="margin-bottom: 20px;">
+      {{ form.as_p }}
+    </div>
+    <button type="submit" 
+            style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer;">
+      Save Task
+    </button>
+  </form>
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'task_list' project.id %}" 
+       style="text-decoration: none; color: #007bff; font-weight: 500;">← Back to Tasks</a>
+  </div>
+
+</div>
+{% endblock %}

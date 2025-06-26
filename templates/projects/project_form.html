@@ -1,0 +1,30 @@
+{% extends "collabtasker/base.html" %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 60px auto; padding: 40px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); font-family: 'Inter', sans-serif;">
+
+  <h1 style="font-size: 30px; color: #1f2937; margin-bottom: 30px; text-align: center; font-weight: 600;">
+    Create a New Project
+  </h1>
+
+  <form method="post" novalidate style="font-size: 16px; color: #374151;">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div style="text-align: center; margin-top: 30px;">
+      <button type="submit" 
+              style="padding: 12px 28px; background-color: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease;">
+        Save Project
+      </button>
+    </div>
+  </form>
+
+  <div style="margin-top: 25px; text-align: center;">
+    <a href="{% url 'project_list' %}" 
+       style="text-decoration: none; color: #2563eb; font-weight: 500; transition: color 0.3s ease;">
+      ← Back to Projects
+    </a>
+  </div>
+
+</div>
+{% endblock %}

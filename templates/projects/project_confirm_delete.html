@@ -1,0 +1,16 @@
+{% extends "collabtasker/base.html" %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 60px auto; padding: 35px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center;">
+
+  <h2 style="color: #dc3545;">Confirm Project Deletion</h2>
+  <p style="margin-top: 15px;">Are you sure you want to delete the project <strong>{{ project.name }}</strong>?</p>
+
+  <form method="post" style="margin-top: 25px;">
+    {% csrf_token %}
+    <button type="submit" style="background-color: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 6px;">Yes, Delete</button>
+    <a href="{% url 'project_detail' project.id %}" style="margin-left: 15px; text-decoration: none; color: #007bff;">Cancel</a>
+  </form>
+
+</div>
+{% endblock %}

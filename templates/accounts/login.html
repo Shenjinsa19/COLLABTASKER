@@ -1,0 +1,30 @@
+{% extends "collabtasker/base.html" %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 60px auto; padding: 30px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <h2 style="text-align: center; margin-bottom: 25px; color: #333333;">Login to CollabTasker</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <label for="email" style="display: block; margin-bottom: 8px; color: #444; font-weight: 500;">Email:</label>
+        <input type="email" name="email" id="email" required 
+               style="width: 100%; padding: 10px 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px;">
+
+        <label for="password" style="display: block; margin-bottom: 8px; color: #444; font-weight: 500;">Password:</label>
+        <input type="password" name="password" id="password" required 
+               style="width: 100%; padding: 10px 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px;">
+
+        <button type="submit" 
+                style="width: 100%; padding: 12px; background-color: #007BFF; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
+            Login
+        </button>
+    </form>
+
+    <div style="margin-top: 15px; text-align: center; font-size: 14px;">
+        Don't have an account? 
+        <a href="{% url 'register' %}" style="color: #007BFF; text-decoration: none;">Register here</a>
+    </div>
+</div>
+{% endblock %}
+

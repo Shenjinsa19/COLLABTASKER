@@ -1,0 +1,49 @@
+{% extends "collabtasker/base.html" %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 60px auto; padding: 35px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+  <h1 style="font-size: 28px; color: #007bff; margin-bottom: 20px;">
+    Task: <span style="color: #333;">{{ task.title }}</span>
+  </h1>
+
+  <p style="font-size: 16px; line-height: 1.6; color: #444;">
+    <strong style="color: #555;">Description:</strong> {{ task.description }}
+  </p>
+
+  <p style="font-size: 16px; line-height: 1.6; color: #444;">
+    <strong style="color: #555;">Assigned to:</strong> {{ task.assigned_to }}
+  </p>
+
+  <p style="font-size: 16px; line-height: 1.6; color: #444;">
+    <strong style="color: #555;">Status:</strong> {{ task.status }}
+  </p>
+
+  <p style="font-size: 16px; line-height: 1.6; color: #444;">
+    <strong style="color: #555;">Deadline:</strong> {{ task.deadline }}
+  </p>
+
+  <div style="margin-top: 30px;">
+    <a href="{% url 'task_list' task.project.id %}" 
+       style="margin-right: 15px; text-decoration: none; color: #007bff; font-weight: 500;">← Back to Tasks</a>
+
+    {% if user.is_authenticated and user == task.project.created_by %}
+      <a href="{% url 'task_create' task.project.id %}" 
+         style="text-decoration: none; background-color: #28a745; color: white; padding: 8px 14px; border-radius: 6px; font-size: 14px; margin-right: 10px;">
+        + Create New Task
+      </a>
+
+      <a href="{% url 'task_update' task.id %}" 
+         style="text-decoration: none; background-color: #007bff; color: white; padding: 8px 14px; border-radius: 6px; font-size: 14px; margin-right: 10px;">
+        ✏️ Edit Task
+      </a>
+
+      <a href="{% url 'task_delete' task.id %}" 
+         style="text-decoration: none; background-color: #dc3545; color: white; padding: 8px 14px; border-radius: 6px; font-size: 14px;">
+        🗑️ Delete Task
+      </a>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
