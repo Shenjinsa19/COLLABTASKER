@@ -260,4 +260,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 import os
 if os.getenv('RENDER'):
     DEBUG = False
-CSRF_TRUSTED_ORIGINS = ['https://collabtasker.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://collabtasker.onrender.com','https://web-production-755f5.up.railway.app/']
