@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'notifications',
     'logs',
     'django_celery_beat',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -225,13 +226,38 @@ CACHES = {
         }
     }
 }
+# import os
+# CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
+# CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
+# # CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+# # CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+
+
+
 import os
-CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
-CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
-# CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+
+# ✅ Use your Upstash URL — note rediss:// (TLS)
+CELERY_BROKER_URL = os.environ.get(
+    'REDIS_URL',
+    'rediss://default:Ac6UAAIjcDE5NGRkOTBiMGNhZDU0Mzk4OGViMjczMGE3ODNkZDhhN3AxMA@tender-snail-52884.upstash.io:6379'
+)
+
+# ✅ Use Django DB to store task results instead of Redis (Upstash doesn't support PUB/SUB well)
+CELERY_RESULT_BACKEND = 'django-db'
+
+# ✅ Other recommended settings
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+# ✅ Optional (avoids SSL cert validation errors with Upstash)
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'ssl_cert_reqs': None
+}
+
 
 
 
