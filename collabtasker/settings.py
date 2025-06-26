@@ -45,7 +45,7 @@ SECRET_KEY = 'django-insecure-bcsqc7sj_!i&*_i-e#q(7xhb9r=ugu3w&=l^)%jyj!)-s0016t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['collabtasker.onrender.com','localhost','127.0.0.1:6379']
+ALLOWED_HOSTS = ['collabtasker.onrender.com','localhost','127.0.0.1']
 
 
 # Application definition
@@ -225,10 +225,11 @@ CACHES = {
         }
     }
 }
-
-
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+import os
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
+# CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
