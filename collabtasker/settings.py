@@ -23,13 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
-ASGI_APPLICATION = 'collabtasker.asgi.application'
-
+redis_url = os.environ.get('REDIS_URL')
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [redis_url],
         },
     },
 }
@@ -45,7 +44,7 @@ SECRET_KEY = 'django-insecure-bcsqc7sj_!i&*_i-e#q(7xhb9r=ugu3w&=l^)%jyj!)-s0016t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['collabtasker.onrender.com','localhost','127.0.0.1','web-production-755f5.up.railway.app']
+ALLOWED_HOSTS = ['collabtasker.onrender.com','localhost','127.0.0.1','web-production-755f5.up.railway.app','.railway.app',]
 
 
 # Application definition
