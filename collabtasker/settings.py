@@ -102,16 +102,27 @@ WSGI_APPLICATION = 'collabtasker.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'collabtasker_db',
+#         'USER': 'postgres',
+#         'PASSWORD': '20042005',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'collabtasker_db',
+        'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': '20042005',
-        'HOST': 'localhost',
+        'PASSWORD': 'sDcKWdDMWncLdkZZiEBnoEiCruKbSxCR',
+        'HOST': 'postgres.railway.internal',
         'PORT': '5432',
     }
 }
+
 
 
 
