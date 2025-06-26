@@ -9,6 +9,12 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
 
 from pathlib import Path
 
@@ -117,21 +123,34 @@ WSGI_APPLICATION = 'collabtasker.wsgi.application'
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'railway',
 #         'USER': 'postgres',
-#         'PASSWORD': 'sDcKWdDMWncLdkZZiEBnoEiCruKbSxCR',
-#         'HOST': 'postgres.railway.internal',
-#         'PORT': '5432',
+#         'PASSWORD': 'nLmKXivJNddXmWnPmvLefGBLUsYhrtjZ',
+#         'HOST': 'gondola.proxy.rlwy.net',
+#         'PORT': '28838',
 #     }
 # }
 
 
 
 
-import dj_database_url
-import os
-
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+    }
 }
+
+
+
+# import dj_database_url
+# import os
+
+# DATABASES = {
+#     'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+# }
 
 
 
