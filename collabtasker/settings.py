@@ -133,12 +133,31 @@ ASGI_APPLICATION = 'collabtasker.asgi.application'
 
 
 
+# import dj_database_url
+# import os
+
+# DATABASES = {
+#     'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+# }
+
+
+
 import dj_database_url
+from dotenv import load_dotenv
 import os
 
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL is not set in environment variables")
+
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 }
+
 
 
 
