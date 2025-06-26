@@ -1,6 +1,6 @@
 import os
 from celery import Celery
-
+import ssl
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'collabtasker.settings')
 
 app = Celery('collabtasker')
@@ -10,5 +10,5 @@ app.conf.beat_scheduler = 'django_celery_beat.schedulers.DatabaseScheduler'
 
 app.conf.broker_transport_options = {
     "visibility_timeout": 3600,
-    "ssl_cert_reqs": None  # Ignore cert validation errors for Upstash
+    "ssl_cert_reqs": ssl.CERT_NONE, # Ignore cert validation errors for Upstash
 }
