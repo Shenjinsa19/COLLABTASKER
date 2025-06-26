@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     'notifications',
     'logs',
     'django_celery_beat',
-    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -97,7 +96,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'collabtasker.wsgi.application'
+ASGI_APPLICATION = 'collabtasker.asgi.application'
 
 
 # Database
@@ -133,25 +132,14 @@ WSGI_APPLICATION = 'collabtasker.wsgi.application'
 
 
 
+
+
+import dj_database_url
+import os
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
+    'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
 }
-
-
-
-# import dj_database_url
-# import os
-
-# DATABASES = {
-#     'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
-# }
 
 
 
@@ -234,29 +222,27 @@ CACHES = {
 # CELERY_ACCEPT_CONTENT = ['json']
 # CELERY_TASK_SERIALIZER = 'json'
 
-
-
 import os
 
-# ✅ Use your Upstash URL — note rediss:// (TLS)
-CELERY_BROKER_URL = os.environ.get(
-    'REDIS_URL',
-    'rediss://default:Ac6UAAIjcDE5NGRkOTBiMGNhZDU0Mzk4OGViMjczMGE3ODNkZDhhN3AxMA@tender-snail-52884.upstash.io:6379'
-)
+redis_url = os.environ.get('REDIS_URL')
 
-# ✅ Use Django DB to store task results instead of Redis (Upstash doesn't support PUB/SUB well)
-CELERY_RESULT_BACKEND = 'django-db'
+if redis_url:
+    # Upstash Redis URL starts with redis:// but for SSL, Celery needs rediss://
+    if redis_url.startswith('redis://'):
+        redis_url = 'rediss://' + redis_url[len('redis://'):]
+else:
+    # Fallback to local Redis if REDIS_URL not set
+    redis_url = 'redis://127.0.0.1:6379/0'
 
-# ✅ Other recommended settings
+CELERY_BROKER_URL = redis_url
+CELERY_RESULT_BACKEND = redis_url
+
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
 
-# ✅ Optional (avoids SSL cert validation errors with Upstash)
-CELERY_BROKER_TRANSPORT_OPTIONS = {
-    'ssl_cert_reqs': None
-}
+
+
+
 
 
 
