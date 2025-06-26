@@ -213,3 +213,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'spmacavity@gmail.com'      
 EMAIL_HOST_PASSWORD = 'siicktfvtluefkqm'     
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+import os
+if os.getenv('RENDER'):
+    DEBUG = False
+CSRF_TRUSTED_ORIGINS = ['https://collabtasker.onrender.com']
