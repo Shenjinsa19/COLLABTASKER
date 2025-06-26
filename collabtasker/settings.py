@@ -45,7 +45,7 @@ SECRET_KEY = 'django-insecure-bcsqc7sj_!i&*_i-e#q(7xhb9r=ugu3w&=l^)%jyj!)-s0016t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['collabtasker.onrender.com','localhost']
+ALLOWED_HOSTS = ['collabtasker.onrender.com','localhost','127.0.0.1:6379']
 
 
 # Application definition
