@@ -47,7 +47,7 @@ CHANNEL_LAYERS = {
             "hosts": [{
                 "address": redis_url,
                 "ssl": True,
-                "ssl_cert_reqs": ssl.CERT_NONE,
+                "ssl_cert_reqs": "none",
                 "max_connections": 100,
             }],
         },
