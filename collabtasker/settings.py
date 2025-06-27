@@ -22,16 +22,38 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# import ssl
+# redis_url = os.environ.get('REDIS_URL')
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [redis_url],
+#             "ssl": True,
+#             "ssl_cert_reqs": ssl.CERT_NONE,
+#             "max_connections": 100,
+#         },
+#     },
+# }
+import ssl
+import os
 
 redis_url = os.environ.get('REDIS_URL')
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [redis_url],
+            "hosts": [{
+                "address": redis_url,
+                "ssl": True,
+                "ssl_cert_reqs": ssl.CERT_NONE,
+                "max_connections": 100,
+            }],
         },
     },
 }
+
 
 
 
