@@ -9,10 +9,12 @@
         
         <label for="email" style="display: block; margin-bottom: 8px; color: #444; font-weight: 500;">Email:</label>
         <input type="email" name="email" id="email" required 
+               value="{{ cached_email|default:'' }}"
                style="width: 100%; padding: 10px 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px;">
 
         <label for="password" style="display: block; margin-bottom: 8px; color: #444; font-weight: 500;">Password:</label>
         <input type="password" name="password" id="password" required 
+               value="{{ cached_password|default:'' }}"
                style="width: 100%; padding: 10px 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px;">
 
         <button type="submit" 
@@ -27,4 +29,3 @@
     </div>
 </div>
 {% endblock %}
-

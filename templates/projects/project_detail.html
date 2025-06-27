@@ -32,8 +32,8 @@
     {% endif %}
   </p>
 
-  <!-- Only show the buttons if the user is authenticated AND is the creator -->
-  {% if user.is_authenticated and user == project.created_by %}
+  <!-- Show buttons only if user is authenticated and is either project creator or superuser -->
+  {% if user.is_authenticated and user == project.created_by or user.is_superuser %}
     <div style="margin-top: 25px;">
       <a href="{% url 'task_create' project.id %}" 
          style="text-decoration: none; background-color: #007bff; color: white; padding: 8px 14px; border-radius: 6px; font-size: 14px;">
