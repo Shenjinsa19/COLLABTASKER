@@ -95,33 +95,47 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
         # Invalidate project list cache for this user after creating new project
         cache.delete(f'user_projects_{self.request.user.id}')
         return response
-    
+
+from django.db.models import Q
+ 
 import logging
 logger = logging.getLogger(__name__)
+
 class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
     template_name = 'projects/project_list.html'
     context_object_name = 'projects'
 
+
     # def get_queryset(self):
-    #     cache_key = f'user_projects_{self.request.user.id}'
-    #     projects = cache.get(cache_key)
-    #     if not projects:
-    #         projects = Project.objects.filter(created_by=self.request.user).select_related('created_by').prefetch_related('members').all()
-    #         cache.set(cache_key, projects, 300)  # Cache for 5 minutes
-    #     return projects
+    #   cache_key = f'user_projects_{self.request.user.id}'
+    #   projects = cache.get(cache_key)
+    #   if projects:
+    #     logger.info(f'Cache hit for {cache_key}')
+    #     print(f'Cache hit for {cache_key}')
+    #   else:
+    #     logger.info(f'Cache miss for {cache_key}, querying DB')
+    #     print(f'Cache miss for {cache_key}, querying DB')
+    #     projects = Project.objects.filter(created_by=self.request.user)
+    #     cache.set(cache_key, projects, 300)
+    #   return projects
     def get_queryset(self):
-      cache_key = f'user_projects_{self.request.user.id}'
-      projects = cache.get(cache_key)
-      if projects:
-        logger.info(f'Cache hit for {cache_key}')
-        print(f'Cache hit for {cache_key}')
-      else:
-        logger.info(f'Cache miss for {cache_key}, querying DB')
-        print(f'Cache miss for {cache_key}, querying DB')
-        projects = Project.objects.filter(created_by=self.request.user)
-        cache.set(cache_key, projects, 300)
-      return projects
+        cache_key = f'user_projects_{self.request.user.id}'
+        projects = cache.get(cache_key)
+        if projects:
+          logger.info(f'Cache hit for {cache_key}')
+          print(f'Cache hit for {cache_key}')
+        else:
+           logger.info(f'Cache miss for {cache_key}, querying DB')
+           print(f'Cache miss for {cache_key}, querying DB')
+
+           projects = Project.objects.filter(
+            Q(created_by=self.request.user) | Q(members=self.request.user)
+           ).distinct()
+
+           cache.set(cache_key, projects, 300)
+        return projects
+
 
 
 
