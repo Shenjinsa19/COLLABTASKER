@@ -52,19 +52,29 @@ CSRF_TRUSTED_ORIGINS = [
 # REDIS CONFIGURATION (Channels, Cache, Celery)
 # ==============================
 
-CHANNEL_REDIS_URL = os.getenv('REDIS_CHANNEL_URL')
-REDIS_CACHE_URL = os.getenv('REDIS_CACHE_URL')
-REDIS_CELERY_URL = os.getenv('REDIS_CELERY_URL')
+def force_db0(url):
+    if url is None:
+        return None
+    # Remove existing db index and force /0
+    if '/' in url.rsplit(':', 1)[-1]:
+        base, _ = url.rsplit('/', 1)
+        return base + '/0'
+    else:
+        return url + '/0'
 
-# Fallbacks if not provided (usually local Redis)
+CHANNEL_REDIS_URL = force_db0(os.getenv('REDIS_CHANNEL_URL'))
+REDIS_CACHE_URL = force_db0(os.getenv('REDIS_CACHE_URL'))
+REDIS_CELERY_URL = force_db0(os.getenv('REDIS_CELERY_URL'))
+
+# Fallbacks if not provided (all to DB 0)
 if not CHANNEL_REDIS_URL:
     CHANNEL_REDIS_URL = 'redis://127.0.0.1:6379/0'
 
 if not REDIS_CACHE_URL:
-    REDIS_CACHE_URL = 'redis://127.0.0.1:6379/1'
+    REDIS_CACHE_URL = 'redis://127.0.0.1:6379/0'
 
 if not REDIS_CELERY_URL:
-    REDIS_CELERY_URL = 'redis://127.0.0.1:6379/2'
+    REDIS_CELERY_URL = 'redis://127.0.0.1:6379/0'
 
 
 CHANNEL_LAYERS = {
@@ -73,9 +83,9 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [{
                 "address": CHANNEL_REDIS_URL,
-                # Use SSLConnection only if rediss:// (SSL enabled)
                 "connection_class": SSLConnection if CHANNEL_REDIS_URL.startswith('rediss://') else None,
             }],
+            "prefix": "channels",  # Prefix keys to avoid collisions
         }
     },
 }
@@ -87,10 +97,8 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_CLASS": SSLConnection if REDIS_CACHE_URL.startswith('rediss://') else None,
-            "CONNECTION_POOL_KWARGS": {
-                # Removed ssl_cert_reqs=None to enable proper SSL verification
-            },
-        }
+            "KEY_PREFIX": "cache",  # Prefix keys to avoid collisions
+        },
     }
 }
 
@@ -98,6 +106,9 @@ CELERY_BROKER_URL = REDIS_CELERY_URL
 CELERY_RESULT_BACKEND = REDIS_CELERY_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    "queue_key_prefix": "celery",  # Prefix celery keys
+}
 
 # ==============================
 # APPLICATION DEFINITION
