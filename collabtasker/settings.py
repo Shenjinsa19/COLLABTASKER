@@ -33,20 +33,55 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000','https:
 
 
 
+# # ==============================
+# # REDIS + CELERY LOCAL CONFIG
+# # ==============================
+
+# # Local Redis
+# redis_url = "redis://127.0.0.1:6379/0"
+
+# # Celery
+# CELERY_BROKER_URL = redis_url
+# CELERY_RESULT_BACKEND = redis_url
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+
+# # Channels
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [redis_url],
+#         },
+#     },
+# }
+
+# # Cache
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": redis_url,
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
+
+
 # ==============================
-# REDIS + CELERY LOCAL CONFIG
+# REDIS + CELERY CONFIG (use env variable on Railway)
 # ==============================
 
-# Local Redis
-redis_url = "redis://127.0.0.1:6379/0"
+# Get Redis URL from environment variable, fallback to localhost for local dev
+redis_url = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
 
-# Celery
+# Celery configuration
 CELERY_BROKER_URL = redis_url
 CELERY_RESULT_BACKEND = redis_url
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
-# Channels
+# Channels (for WebSockets)
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -56,7 +91,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Cache
+# Cache configuration
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -66,6 +101,7 @@ CACHES = {
         }
     }
 }
+
 
 # ==============================
 # APPLICATION DEFINITION
