@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
-import ssl
+from redis.connection import SSLConnection
 
 # Load .env file
 load_dotenv()
@@ -66,14 +66,15 @@ if not REDIS_CACHE_URL:
 if not REDIS_CELERY_URL:
     REDIS_CELERY_URL = 'redis://127.0.0.1:6379/2'
 
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [{
                 "address": CHANNEL_REDIS_URL,
-                "ssl": CHANNEL_REDIS_URL.startswith('rediss://'),
-                "ssl_cert_reqs": ssl.CERT_NONE,
+                "ssl_cert_reqs": None,  # Adjust for production if needed
+                "connection_class": "redis.connection.SSLConnection" if CHANNEL_REDIS_URL.startswith('rediss://') else None,
             }],
         }
     },
@@ -85,9 +86,9 @@ CACHES = {
         "LOCATION": REDIS_CACHE_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_CLASS": SSLConnection if REDIS_CACHE_URL.startswith('rediss://') else None,
             "CONNECTION_POOL_KWARGS": {
-                "ssl": REDIS_CACHE_URL.startswith('rediss://'),
-                "ssl_cert_reqs": ssl.CERT_NONE,
+                "ssl_cert_reqs": None,  # Adjust for production if needed
             },
         }
     }
@@ -229,7 +230,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'spmacavity@gmail.com'
-EMAIL_HOST_PASSWORD = 'siicktfvtluefkqm'
+EMAIL_HOST_PASSWORD = 'siicktfvtluefkqm'  # Make sure to keep this secret or move to env vars
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # ==============================
