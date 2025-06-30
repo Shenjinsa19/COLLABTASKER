@@ -15,6 +15,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 import ssl
+
 # Load .env file
 load_dotenv()
 
@@ -31,7 +32,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-bcsqc7sj_!i&*_i-e#q(7xhb9r=ugu3w&=l^)%jyj!)-s0016t'
 
 DEBUG = True
-
 if os.getenv('RENDER'):
     DEBUG = False
 
@@ -52,54 +52,49 @@ CSRF_TRUSTED_ORIGINS = [
 # REDIS CONFIGURATION (Channels, Cache, Celery)
 # ==============================
 
-redis_url = os.environ.get('REDIS_URL')
-celery_redis_url = os.getenv("REDIS_CELERY_URL", redis_url)
+CHANNEL_REDIS_URL = os.getenv('REDIS_CHANNEL_URL')
+REDIS_CACHE_URL = os.getenv('REDIS_CACHE_URL')
+REDIS_CELERY_URL = os.getenv('REDIS_CELERY_URL')
 
-if redis_url:
-    # Upstash Redis URL starts with redis:// but for SSL, Celery needs rediss://
-    if redis_url.startswith('redis://'):
-        redis_url = 'rediss://' + redis_url[len('redis://'):]
-else:
-    # Fallback to local Redis if REDIS_URL not set
-    redis_url = 'redis://127.0.0.1:6379/0'
+# Fallbacks if not provided (usually local Redis)
+if not CHANNEL_REDIS_URL:
+    CHANNEL_REDIS_URL = 'redis://127.0.0.1:6379/0'
+
+if not REDIS_CACHE_URL:
+    REDIS_CACHE_URL = 'redis://127.0.0.1:6379/1'
+
+if not REDIS_CELERY_URL:
+    REDIS_CELERY_URL = 'redis://127.0.0.1:6379/2'
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        # 'CONFIG': {
-        #     "hosts": [redis_url],
-        # },
         'CONFIG': {
             "hosts": [{
-                "address": redis_url,
-                "ssl": True,
+                "address": CHANNEL_REDIS_URL,
+                "ssl": CHANNEL_REDIS_URL.startswith('rediss://'),
                 "ssl_cert_reqs": ssl.CERT_NONE,
             }],
         }
     },
 }
 
-
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": redis_url,  # DB 1 for cache
+        "LOCATION": REDIS_CACHE_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
-                "ssl": True,
-                "ssl_cert_reqs": ssl.CERT_NONE, # ✅ Use None (not string "CERT_NONE")
+                "ssl": REDIS_CACHE_URL.startswith('rediss://'),
+                "ssl_cert_reqs": ssl.CERT_NONE,
             },
         }
     }
 }
 
-
-CELERY_BROKER_URL = os.getenv("REDIS_CELERY_URL")
-CELERY_RESULT_BACKEND = os.getenv("REDIS_CELERY_URL")
-
-# CELERY_BROKER_URL = redis_url
-# CELERY_RESULT_BACKEND = redis_url
+CELERY_BROKER_URL = REDIS_CELERY_URL
+CELERY_RESULT_BACKEND = REDIS_CELERY_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
@@ -221,7 +216,6 @@ USE_TZ = True
 # ==============================
 
 STATIC_URL = '/static/'
-
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
