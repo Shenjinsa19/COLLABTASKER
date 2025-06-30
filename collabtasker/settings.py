@@ -26,9 +26,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-local-secret-key')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','web-production-755f5.up.railway.app']
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000','https://collabtasker.onrender.com',
+    'https://web-production-755f5.up.railway.app',]
+
+
 
 # ==============================
 # REDIS + CELERY LOCAL CONFIG
