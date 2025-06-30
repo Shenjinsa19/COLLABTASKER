@@ -73,8 +73,8 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [{
                 "address": CHANNEL_REDIS_URL,
-                "ssl_cert_reqs": None,  # Adjust for production if needed
-                "connection_class": "redis.connection.SSLConnection" if CHANNEL_REDIS_URL.startswith('rediss://') else None,
+                # Use SSLConnection only if rediss:// (SSL enabled)
+                "connection_class": SSLConnection if CHANNEL_REDIS_URL.startswith('rediss://') else None,
             }],
         }
     },
@@ -88,7 +88,7 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_CLASS": SSLConnection if REDIS_CACHE_URL.startswith('rediss://') else None,
             "CONNECTION_POOL_KWARGS": {
-                "ssl_cert_reqs": None,  # Adjust for production if needed
+                # Removed ssl_cert_reqs=None to enable proper SSL verification
             },
         }
     }
@@ -230,7 +230,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'spmacavity@gmail.com'
-EMAIL_HOST_PASSWORD = 'siicktfvtluefkqm'  # Make sure to keep this secret or move to env vars
+EMAIL_HOST_PASSWORD = 'siicktfvtluefkqm'  # Consider moving to env vars for security
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # ==============================
